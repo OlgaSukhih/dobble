@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dobble Animal Edition</title>
+<style>
+    body { font-family: Arial, sans-serif; text-align: center; }
+    .card { display: flex; flex-wrap: wrap; justify-content: center; margin: 20px; }
+    .card img { width: 100px; height: 100px; margin: 10px; cursor: pointer; border: 2px solid #ccc; border-radius: 10px; }
+    .feedback { font-size: 20px; color: green; margin: 20px; }
+    .score { font-size: 18px; margin: 10px; }
+    button { padding: 10px 20px; font-size: 16px; }
+</style>
+</head>
+<body>
+
+<h1>Dobble Animal Edition</h1>
+<p>Найдите совпадающее животное с компьютером и назовите его на английском!</p>
+
+<div id="score" class="score">Счёт: 0</div>
+<div id="turns" class="score">Ходов: 0 из 15</div>
+<div id="card" class="card"></div>
+<div id="feedback" class="feedback"></div>
+<button onclick="nextTurn()">Следующая карточка</button>
+
+<script>
+const images = ['animal_1.png', 'animal_10.png', 'animal_11.png', 'animal_12.png', 'animal_13.png', 'animal_14.png', 'animal_15.png', 'animal_16.png', 'animal_17.png', 'animal_18.png', 'animal_19.png', 'animal_2.png', 'animal_20.png', 'animal_21.png', 'animal_22.png', 'animal_23.png', 'animal_24.png', 'animal_25.png', 'animal_26.png', 'animal_27.png', 'animal_28.png', 'animal_29.png', 'animal_3.png', 'animal_30.png', 'animal_31.png', 'animal_32.png', 'animal_33.png', 'animal_34.png', 'animal_4.png', 'animal_5.png', 'animal_6.png', 'animal_7.png', 'animal_8.png', 'animal_9.png'];
+let score = 0;
+let turns = 0;
+let playerCard = [];
+let computerCard = [];
+let matchAnimal = "";
+
+function nextTurn() {
+    if (turns >= 15) {
+        document.getElementById('feedback').innerHTML = 'Игра окончена! Ваш счёт: ' + score;
+        return;
+    }
+    turns++;
+    document.getElementById('turns').innerHTML = 'Ходов: ' + turns + ' из 15';
+    playerCard = [];
+    computerCard = [];
+
+    // Выбираем случайные 6 картинок для игрока и компьютера
+    while (playerCard.length < 6) {
+        let rand = images[Math.floor(Math.random() * images.length)];
+        if (!playerCard.includes(rand)) playerCard.push(rand);
+    }
+    while (computerCard.length < 6) {
+        let rand = images[Math.floor(Math.random() * images.length)];
+        if (!computerCard.includes(rand)) computerCard.push(rand);
+    }
+
+    // Находим совпадение
+    matchAnimal = playerCard.find(val => computerCard.includes(val));
+    if (!matchAnimal) matchAnimal = playerCard[0]; // На всякий случай
+
+    // Показываем карточку
+    const cardDiv = document.getElementById('card');
+    cardDiv.innerHTML = '';
+    playerCard.forEach(img => {
+        const imageElem = document.createElement('img');
+        imageElem.src = '/mnt/data/final_dobble_images/' + img;
+        imageElem.onclick = () => checkMatch(img);
+        cardDiv.appendChild(imageElem);
+    });
+
+    document.getElementById('feedback').innerHTML = '';
+}
+
+function checkMatch(selected) {
+    if (selected === matchAnimal) {
+        document.getElementById('feedback').innerHTML = 'Правильно! Это ' + matchAnimal.split('.')[0].replace('animal_', '');
+        score++;
+    } else {
+        document.getElementById('feedback').innerHTML = 'Неправильно. Верный ответ: ' + matchAnimal.split('.')[0].replace('animal_', '');
+    }
+    document.getElementById('score').innerHTML = 'Счёт: ' + score;
+}
+
+nextTurn();
+</script>
+
+</body>
+</html>
